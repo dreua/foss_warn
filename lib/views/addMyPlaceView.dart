@@ -4,6 +4,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:foss_warn/class/class_NotificationService.dart';
 import 'package:foss_warn/services/listHandler.dart';
 import 'package:provider/provider.dart';
+import '../services/unified_push.dart';
 import '../services/updateProvider.dart';
 
 class AddMyPlaceView extends StatefulWidget {
@@ -83,6 +84,7 @@ class _AddMyPlaceViewState extends State<AddMyPlaceView> {
                             NotificationService.cancelOneNotification(3);
                             Navigator.of(context).pop();
                           });
+                          registerForGeocode(context, "1234");
                         },
                       ),
                     )

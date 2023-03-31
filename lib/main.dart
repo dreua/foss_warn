@@ -2,10 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:foss_warn/class/class_alarmManager.dart';
 import 'package:foss_warn/services/geocodeHandler.dart';
 import 'package:foss_warn/services/listHandler.dart';
+import 'package:foss_warn/services/unified_push.dart';
 import 'package:foss_warn/views/aboutView.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:unifiedpush/constants.dart';
+import 'package:unifiedpush/unifiedpush.dart';
 
 import 'enums/DataFetchStatus.dart';
 import 'views/MyPlacesView.dart';
@@ -25,6 +28,10 @@ import 'widgets/dialogs/SortByDialog.dart';
 import 'themes/themes.dart';
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+
+var instance = "FOSSWarn";
+var endpoint = "";
+var registered = false;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -122,13 +129,22 @@ class _HomeViewState extends State<HomeView> {
 
   @override
   void initState() {
-    super.initState();
+    UnifiedPush.initialize(
+      onNewEndpoint:
+          onNewEndpoint, // takes (String endpoint, String instance) in args
+      onRegistrationFailed: onRegistrationFailed, // takes (String instance)
+      onUnregistered: onUnregistered, // takes (String instance)
+      onMessage:
+          onMessage, // takes (Uint8List message, String instance) in args
+    );
+
     loadMyPlacesList();
     listenNotifications();
     if (geocodeMap.isEmpty) {
       print("call geocode handler");
       geocodeHandler();
     }
+    super.initState();
   }
 
   void listenNotifications() {
@@ -151,6 +167,23 @@ class _HomeViewState extends State<HomeView> {
               SystemUiOverlayStyle(statusBarBrightness: Brightness.dark),
           backgroundColor: Theme.of(context).colorScheme.secondary,
           actions: [
+            // DEBUG @todo remove later
+            IconButton(
+                icon: Icon(Icons.bug_report),
+                onPressed: () {
+                  print("Register?" + registered.toString());
+                  if (registered) {
+                    UnifiedPush.unregister(instance);
+                    registered = false;
+                  } else {
+                    UnifiedPush.removeNoDistributorDialogACK();
+                    UnifiedPush.registerAppWithDialog(
+                      context, instance,
+                      [featureAndroidBytesMessage]
+                    );
+                  }
+                }),
+            // END DEBUG
             showAllWarnings
                 ? IconButton(
                     icon: Icon(Icons.info_outline),
@@ -183,7 +216,8 @@ class _HomeViewState extends State<HomeView> {
                 markAllWarningsAsReadFromMain(context);
                 final snackBar = SnackBar(
                   content: Text(
-                    AppLocalizations.of(context).main_app_bar_tooltip_mark_all_warnings_as_read,
+                    AppLocalizations.of(context)
+                        .main_app_bar_tooltip_mark_all_warnings_as_read,
                     style: TextStyle(color: Colors.black),
                   ),
                   backgroundColor: Colors.green[100],
@@ -194,12 +228,13 @@ class _HomeViewState extends State<HomeView> {
                 ScaffoldMessenger.of(context).showSnackBar(snackBar);
               },
               icon: Icon(Icons.mark_chat_read),
-              tooltip: AppLocalizations.of(context).main_app_bar_tooltip_mark_all_warnings_as_read,
+              tooltip: AppLocalizations.of(context)
+                  .main_app_bar_tooltip_mark_all_warnings_as_read,
             ),
             PopupMenuButton(
                 icon: Icon(Icons.more_vert),
                 onSelected: (result) {
-                  switch(result) {
+                  switch (result) {
                     case 0:
                       Navigator.push(
                         context,
@@ -215,8 +250,14 @@ class _HomeViewState extends State<HomeView> {
                   }
                 },
                 itemBuilder: (context) => <PopupMenuEntry>[
-                      PopupMenuItem(child: Text( AppLocalizations.of(context).main_dot_menu_settings), value: 0),
-                      PopupMenuItem(child: Text(AppLocalizations.of(context).main_dot_menu_about), value: 1)
+                      PopupMenuItem(
+                          child: Text(AppLocalizations.of(context)
+                              .main_dot_menu_settings),
+                          value: 0),
+                      PopupMenuItem(
+                          child: Text(
+                              AppLocalizations.of(context).main_dot_menu_about),
+                          value: 1)
                     ])
           ],
         ),
