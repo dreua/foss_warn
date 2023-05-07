@@ -84,7 +84,8 @@ class _AddMyPlaceViewState extends State<AddMyPlaceView> {
                             NotificationService.cancelOneNotification(3);
                             Navigator.of(context).pop();
                           });
-                          registerForGeocode(context, "1234");
+                          // registerd unifiedPush
+                          registerForGeocode(context, geocodeMap[place]!);
                         },
                       ),
                     )
