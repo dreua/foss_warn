@@ -103,6 +103,8 @@ saveSettings() async {
   preferences.setString("showAllWarnings", showAllWarnings.toString());
   preferences.setString("notificationEventsSettings", jsonEncode(notificationEventsSettings));
   preferences.setBool("activateAlertSwiss", activateAlertSwiss);
+  preferences.setString("unifiedPushEndpoint", unifiedPushEndpoint);
+  preferences.setBool("unifiedPushRegistered", unifiedPushRegistered);
   print("Settings saved");
 }
 
@@ -257,6 +259,12 @@ loadSettings() async {
   }
   if (preferences.containsKey("activateAlertSwiss")) {
     activateAlertSwiss = preferences.getBool("activateAlertSwiss")!;
+  }
+  if (preferences.containsKey("unifiedPushEndpoint")) {
+    unifiedPushEndpoint = preferences.getString("unifiedPushEndpoint")!;
+  }
+  if (preferences.containsKey("unifiedPushRegistered")) {
+    unifiedPushRegistered = preferences.getBool("unifiedPushRegistered")!;
   }
 }
 
