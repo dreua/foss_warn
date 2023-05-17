@@ -30,8 +30,8 @@ import 'themes/themes.dart';
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
 var instance = "FOSSWarn";
-var endpoint = "";
-var registered = false;
+var unifiedPushEndpoint = "";
+var unifiedPushRegistered = false;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -44,8 +44,8 @@ void main() async {
   if (notificationGeneral) {
     print("Background notification enabled");
     // AlarmManager().cancelBackgroundTask(); // just for debug
-    AlarmManager().initialize();
-    AlarmManager().registerBackgroundTask();
+    // AlarmManager().initialize(); //@todo enable for production
+    // AlarmManager().registerBackgroundTask();
   } else {
     print("Background notification disabled due to user setting");
   }
@@ -171,10 +171,10 @@ class _HomeViewState extends State<HomeView> {
             IconButton(
                 icon: Icon(Icons.bug_report),
                 onPressed: () {
-                  print("Register?" + registered.toString());
-                  if (registered) {
+                  print("Register?" + unifiedPushRegistered.toString());
+                  if (unifiedPushRegistered) {
                     UnifiedPush.unregister(instance);
-                    registered = false;
+                    unifiedPushRegistered = false;
                   } else {
                     UnifiedPush.removeNoDistributorDialogACK();
                     UnifiedPush.registerAppWithDialog(
