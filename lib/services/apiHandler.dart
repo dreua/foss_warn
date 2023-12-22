@@ -44,26 +44,28 @@ Future<void> callAPI() async {
     else if (place is NinaPlace) {
       try {
         Response _response;
-        _response =
-            await getDashboard(place, _baseUrl).timeout(userPreferences.networkTimeout);
+        _response = await getDashboard(place, _baseUrl)
+            .timeout(userPreferences.networkTimeout);
 
         // 304 = with etag no change since last request
         if (_response.statusCode == 304) {
-          print("Nothing change for: " + place.name);
+          print("Nothing changed for: " + place.name);
         }
         // 200 = check if request was successfully
         else if (_response.statusCode == 200) {
           // decode the _data
           _data = jsonDecode(utf8.decode(_response.bodyBytes));
-          _tempWarnMessageList.clear();
+
           // parse the _data into List of Warnings
           _tempWarnMessageList = await parseNinaJsonData(_data, _baseUrl, place)
               .timeout(userPreferences.networkTimeout);
-          // remove old warning
+
+          // remove old and duplicated warnings
           removeOldWarningFromList(place, _tempWarnMessageList);
           userPreferences.areWarningsFromCache = false;
+
+          // store warnings
           print("Saving myPlacesList with new warnings");
-          // store warning
           saveMyPlacesList();
         }
         // connection error
@@ -120,6 +122,7 @@ WarnMessage? createWarning(
         return parameter[i]["value"];
       }
     }
+
     return "Deutscher Wetterdienst";
   }
 
@@ -196,13 +199,35 @@ Future<List<WarnMessage>> parseNinaJsonData(
 /// check if stored warnings are still up-to-date and remove if not
 void removeOldWarningFromList(
     NinaPlace place, List<WarnMessage> tempWarnMessageList) {
-  // remove old warnings
   List<WarnMessage> warnMessagesToRemove = [];
+
   for (WarnMessage msg in place.warnings) {
     if (!tempWarnMessageList.any((tmp) => tmp.identifier == msg.identifier)) {
       warnMessagesToRemove.add(msg);
+      continue;
+    }
+
+    // @todo: should this be limited to the DWD source only?
+    // @todo: Unterschied msg.source und msg.publisher? Einschließen von msg.messageType?
+    if (msg.source == "DWD") {
+      // same ids already filtered out
+      // only dates differ
+      if (place.warnings.any((placeWarning) =>
+          placeWarning.status == msg.status &&
+          placeWarning.scope == msg.scope &&
+          placeWarning.category == msg.category &&
+          placeWarning.event == msg.event &&
+          placeWarning.urgency == msg.urgency &&
+          placeWarning.severity == msg.severity &&
+          placeWarning.certainty == msg.certainty &&
+          placeWarning.headline == msg.headline &&
+          placeWarning.description == msg.description &&
+          placeWarning.instruction == msg.instruction)) {
+        warnMessagesToRemove.add(msg);
+      }
     }
   }
+
   for (WarnMessage message in warnMessagesToRemove) {
     place.removeWarningFromList(message);
   }
