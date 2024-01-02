@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:foss_warn/enums/Severity.dart';
 import 'package:foss_warn/main.dart';
 import '../class/class_notificationPreferences.dart';
+import '../class/class_userPreferences.dart';
 import '../enums/WarningSource.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -88,7 +89,7 @@ class _NotificationPreferencesListTileWidgetState
   Widget build(BuildContext context) {
     if (widget.notificationPreferences.warningSource ==
             WarningSource.alertSwiss &&
-        !userPreferences.activateAlertSwiss) {
+        !UserPreferences().activateAlertSwiss) {
       return SizedBox();
     } else {
       return Column(
@@ -103,7 +104,8 @@ class _NotificationPreferencesListTileWidgetState
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  widget.notificationPreferences.warningSource.name.toUpperCase(),
+                  widget.notificationPreferences.warningSource.name
+                      .toUpperCase(),
                   style: Theme.of(context).textTheme.titleMedium,
                 ),
                 // show a switch when source can be disabled
@@ -154,12 +156,13 @@ class _NotificationPreferencesListTileWidgetState
                             child: Slider(
                               label: getLabelForWarningSeverity(
                                   Severity.getIndexFromSeverity(widget
-                                      .notificationPreferences.notificationLevel)),
+                                      .notificationPreferences
+                                      .notificationLevel)),
                               divisions: 3,
                               min: 0,
                               max: 3,
-                              value: Severity.getIndexFromSeverity(
-                                  widget.notificationPreferences.notificationLevel),
+                              value: Severity.getIndexFromSeverity(widget
+                                  .notificationPreferences.notificationLevel),
                               onChanged: (value) {
                                 setState(
                                   () {
@@ -179,7 +182,21 @@ class _NotificationPreferencesListTileWidgetState
                               },
                               onChangeEnd: (value) {
                                 // save settings, after change is complete
-                                saveSettings();
+                                //saveSettings();
+                                List<NotificationPreferences> _temp =
+                                    UserPreferences()
+                                        .notificationSourceSettings;
+                                // update value in temp list
+                                _temp[_temp.indexWhere((element) =>
+                                            element.warningSource ==
+                                            widget.notificationPreferences
+                                                .warningSource)]
+                                        .notificationLevel =
+                                    widget.notificationPreferences
+                                        .notificationLevel;
+                                //store updated List
+                                UserPreferences().notificationSourceSettings =
+                                    _temp;
                               },
                             ),
                           ),
@@ -195,10 +212,14 @@ class _NotificationPreferencesListTileWidgetState
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             //@todo translation
-                            Text("extreme"), // notification_settings_slidervalue_extreme
-                            Text("severe"), // notification_settings_slidervalue_severe
-                            Text("moderate"), // notification_settings_slidervalue_moderate
-                            Text("minor"), // notification_settings_slidervalue_minor
+                            Text(
+                                "extreme"), // notification_settings_slidervalue_extreme
+                            Text(
+                                "severe"), // notification_settings_slidervalue_severe
+                            Text(
+                                "moderate"), // notification_settings_slidervalue_moderate
+                            Text(
+                                "minor"), // notification_settings_slidervalue_minor
                           ],
                         ),
                       )

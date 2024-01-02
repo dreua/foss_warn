@@ -7,6 +7,7 @@ import '../class/abstract_Place.dart';
 import '../class/class_WarnMessage.dart';
 import '../class/class_Area.dart';
 import '../class/class_Geocode.dart';
+import '../class/class_userPreferences.dart';
 import 'listHandler.dart';
 import 'saveAndLoadSharedPreferences.dart';
 
@@ -27,7 +28,7 @@ Future callAlertSwissAPI() async {
     await loadETags();
 
     // get overview if warnings exits for myplaces
-    response = await get(Uri.parse(url)).timeout(userPreferences.networkTimeout);
+    response = await get(Uri.parse(url)).timeout(UserPreferences().networkTimeout);
 
     // check if request was sucsessfully
     if (response.statusCode == 200) {
@@ -82,7 +83,7 @@ WarnMessage? createWarning(var data) {
     for (int i = 0; i < data.length; i++) {
       tempAreaList.add(
         Area(
-          areaDesc: data[i]["description"],
+          areaDesc: data[i]["description"]["description"],
           geocodeList: [
             Geocode(
                 geocodeName: data[i]["regions"][0]["region"],

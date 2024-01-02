@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import '../class/class_userPreferences.dart';
 import '../services/welcomeScreenItems.dart';
 import '../main.dart';
 import '../services/saveAndLoadSharedPreferences.dart';
@@ -73,7 +74,7 @@ class _WelcomeViewState extends State<WelcomeView> with WidgetsBindingObserver {
                       ? TextButton(
                           onPressed: () {
                             setState(() {
-                              userPreferences.showWelcomeScreen = false;
+                              UserPreferences().showWelcomeScreen = false;
                             });
                             saveSettings();
 

@@ -3,6 +3,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:foss_warn/widgets/NotificationPreferencesListTileWidget.dart';
 import 'package:foss_warn/widgets/dialogs/WarningSeverityExplanation.dart';
 
+import '../class/class_userPreferences.dart';
 import '../main.dart';
 
 class NotificationSettingsView extends StatefulWidget {
@@ -63,11 +64,15 @@ class _NotificationSettingsViewState extends State<NotificationSettingsView> {
                       ],
                     )),
               ),
+
+              FloatingActionButton(onPressed: () {
+                UserPreferences().notificationSourceSettings;
+              }),
               SizedBox(
                 height: 10,
               ),
               // generate the settings tiles
-              ...userPreferences.notificationSourceSettings
+              ...UserPreferences().notificationSourceSettings
                   .map((element) => NotificationPreferencesListTileWidget(
                         notificationPreferences: element,
                       ))

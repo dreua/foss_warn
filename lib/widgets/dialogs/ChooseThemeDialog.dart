@@ -4,6 +4,7 @@ import 'package:foss_warn/main.dart';
 import 'package:foss_warn/services/saveAndLoadSharedPreferences.dart';
 import 'package:provider/provider.dart';
 
+import '../../class/class_userPreferences.dart';
 import '../../services/updateProvider.dart';
 
 class ChooseThemeDialog extends StatefulWidget {
@@ -36,13 +37,13 @@ class _ChooseThemeDialogState extends State<ChooseThemeDialog> {
               borderRadius: BorderRadius.all(Radius.circular(10)),
               side: BorderSide(
                   // change border color if theme is currently selected
-                  color: (userPreferences.selectedThemeMode == themeMode)
+                  color: (UserPreferences().selectedThemeMode == themeMode)
                       ? Colors.green
                       : Colors.transparent,
                   width: 5))),
       onPressed: () {
         setState(() {
-          userPreferences.selectedThemeMode = themeMode;
+          UserPreferences().selectedThemeMode = themeMode;
         });
         // Reload the full app for theme changes to reflect
         final updater = Provider.of<Update>(context, listen: false);
@@ -100,14 +101,14 @@ class _ChooseThemeDialogState extends State<ChooseThemeDialog> {
   List<Widget> generateAvailableThemes() {
     List<Widget> result = [];
 
-    if (userPreferences.selectedThemeMode == ThemeMode.light ||
-        (userPreferences.selectedThemeMode == ThemeMode.system &&
+    if (UserPreferences().selectedThemeMode == ThemeMode.light ||
+        (UserPreferences().selectedThemeMode == ThemeMode.system &&
             MediaQuery.of(context).platformBrightness == Brightness.light)) {
-      for (ThemeData th in userPreferences.availableLightThemes) {
+      for (ThemeData th in UserPreferences().availableLightThemes) {
         result.add(generateColorButton(th));
       }
     } else {
-      for (ThemeData th in userPreferences.availableDarkThemes) {
+      for (ThemeData th in UserPreferences().availableDarkThemes) {
         result.add(generateColorButton(th));
       }
     }
@@ -122,13 +123,13 @@ class _ChooseThemeDialogState extends State<ChooseThemeDialog> {
         child: SizedBox(),
         onPressed: () {
           setState(() {
-            if (userPreferences.selectedThemeMode == ThemeMode.light ||
-                (userPreferences.selectedThemeMode == ThemeMode.system &&
+            if (UserPreferences().selectedThemeMode == ThemeMode.light ||
+                (UserPreferences().selectedThemeMode == ThemeMode.system &&
                     MediaQuery.of(context).platformBrightness ==
                         Brightness.light)) {
-              userPreferences.selectedLightTheme = theme;
+              UserPreferences().selectedLightTheme = theme;
             } else {
-              userPreferences.selectedDarkTheme = theme;
+              UserPreferences().selectedDarkTheme = theme;
             }
           });
           // Reload the full app for theme changes to reflect
@@ -142,8 +143,8 @@ class _ChooseThemeDialogState extends State<ChooseThemeDialog> {
           shape: CircleBorder(
               side: BorderSide(
                   // change border color if theme is currently selected
-                  color: (userPreferences.selectedLightTheme == theme ||
-                          userPreferences.selectedDarkTheme == theme)
+                  color: (UserPreferences().selectedLightTheme == theme ||
+                          UserPreferences().selectedDarkTheme == theme)
                       ? Colors.green
                       : Colors.transparent,
                   width: 5)),

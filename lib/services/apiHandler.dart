@@ -7,6 +7,7 @@ import '../class/class_WarnMessage.dart';
 import '../class/class_Area.dart';
 import '../class/class_Geocode.dart';
 import '../class/abstract_Place.dart';
+import '../class/class_userPreferences.dart';
 import 'alertSwiss.dart';
 import 'listHandler.dart';
 import 'sendStatusNotification.dart';
@@ -33,7 +34,7 @@ Future<void> callAPI() async {
     // if the place is for swiss skip this place
     // print(place.name);
     if (place is AlertSwissPlace) {
-      if (!userPreferences.activateAlertSwiss) {
+      if (!UserPreferences().activateAlertSwiss) {
         _successfullyFetched = false;
         _error += "Sie haben einen AlertSwiss Ort hinzugefügt,"
             " aber AlertSwiss nicht als Quelle aktiviert \n";
@@ -45,7 +46,7 @@ Future<void> callAPI() async {
       try {
         Response _response;
         _response =
-            await getDashboard(place, _baseUrl).timeout(userPreferences.networkTimeout);
+            await getDashboard(place, _baseUrl).timeout(UserPreferences().networkTimeout);
 
         // 304 = with etag no change since last request
         if (_response.statusCode == 304) {
@@ -58,10 +59,10 @@ Future<void> callAPI() async {
           _tempWarnMessageList.clear();
           // parse the _data into List of Warnings
           _tempWarnMessageList = await parseNinaJsonData(_data, _baseUrl, place)
-              .timeout(userPreferences.networkTimeout);
+              .timeout(UserPreferences().networkTimeout);
           // remove old warning
           removeOldWarningFromList(place, _tempWarnMessageList);
-          userPreferences.areWarningsFromCache = false;
+          UserPreferences().areWarningsFromCache = false;
           print("Saving myPlacesList with new warnings");
           // store warning
           saveMyPlacesList();
@@ -77,13 +78,13 @@ Future<void> callAPI() async {
         print("Something went wrong while trying to call the NINA API:  $e");
         _successfullyFetched = false;
         // set areWarningFrom cache to true to display information
-        userPreferences.areWarningsFromCache = true;
+        UserPreferences().areWarningsFromCache = true;
         _error += e.toString() + " \n";
       }
     }
   }
   // update status notification if the user wants
-  if (userPreferences.showStatusNotification) {
+  if (UserPreferences().showStatusNotification) {
     if (_error != "") {
       sendStatusUpdateNotification(_successfullyFetched, _error);
     } else {
@@ -92,7 +93,7 @@ Future<void> callAPI() async {
   }
 
   // call alert Swiss
-  if (userPreferences.activateAlertSwiss) {
+  if (UserPreferences().activateAlertSwiss) {
     await callAlertSwissAPI();
   }
 

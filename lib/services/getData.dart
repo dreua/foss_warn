@@ -3,6 +3,7 @@ import 'package:foss_warn/enums/DataFetchStatus.dart';
 import 'package:foss_warn/enums/WarningSource.dart';
 import 'package:foss_warn/services/alertSwiss.dart';
 
+import '../class/class_userPreferences.dart';
 import '../enums/Certainty.dart';
 import '../enums/Severity.dart';
 import '../main.dart';
@@ -34,9 +35,9 @@ Future getData(bool useEtag) async {
         Uri.parse('https://warnung.bund.de/bbk.mowas/gefahrendurchsagen.json');
 
     if (useEtag) {
-      _response = await get(urlMowas, headers: {'If-None-Match': appState.mowasETag}).timeout(userPreferences.networkTimeout);
+      _response = await get(urlMowas, headers: {'If-None-Match': appState.mowasETag}).timeout(UserPreferences().networkTimeout);
     } else {
-      _response = await get(urlMowas).timeout(userPreferences.networkTimeout);
+      _response = await get(urlMowas).timeout(UserPreferences().networkTimeout);
     }
 
     //print("Response status: " + response.statusCode.toString());
@@ -131,9 +132,9 @@ Future getData(bool useEtag) async {
     var urlKatwarn =
         Uri.parse('https://warnung.bund.de/bbk.katwarn/warnmeldungen.json');
     if (useEtag) {
-      _response = await get(urlKatwarn, headers: {'If-None-Match': appState.katwarnETag}).timeout(userPreferences.networkTimeout);
+      _response = await get(urlKatwarn, headers: {'If-None-Match': appState.katwarnETag}).timeout(UserPreferences().networkTimeout);
     } else {
-      _response = await get(urlKatwarn).timeout(userPreferences.networkTimeout);
+      _response = await get(urlKatwarn).timeout(UserPreferences().networkTimeout);
     }
     //print("Response status: " + response.statusCode.toString());
     if (_response.statusCode == 200) {
@@ -227,9 +228,9 @@ Future getData(bool useEtag) async {
     var urlBiwapp =
         Uri.parse('https://warnung.bund.de/bbk.biwapp/warnmeldungen.json');
     if (useEtag) {
-      _response = await get(urlBiwapp, headers: {'If-None-Match': appState.biwappETag}).timeout(userPreferences.networkTimeout);
+      _response = await get(urlBiwapp, headers: {'If-None-Match': appState.biwappETag}).timeout(UserPreferences().networkTimeout);
     } else {
-      _response = await get(urlBiwapp).timeout(userPreferences.networkTimeout);
+      _response = await get(urlBiwapp).timeout(UserPreferences().networkTimeout);
     }
     //print("Response status: " + response.statusCode.toString());
     if (_response.statusCode == 200) {
@@ -327,9 +328,9 @@ Future getData(bool useEtag) async {
         'https://warnung.bund.de/bbk.dwd/unwetter.json'); //https://s3.eu-central-1.amazonaws.com/app-prod-static.warnwetter.de/v16/gemeinde_warnings.json
 
     if (useEtag) {
-      _response = await get(urlDWDwarnings, headers: {'If-None-Match': appState.dwdETag}).timeout(userPreferences.networkTimeout);
+      _response = await get(urlDWDwarnings, headers: {'If-None-Match': appState.dwdETag}).timeout(UserPreferences().networkTimeout);
     } else {
-      _response = await get(urlDWDwarnings).timeout(userPreferences.networkTimeout);
+      _response = await get(urlDWDwarnings).timeout(UserPreferences().networkTimeout);
     }
 
     //print("Response status: " + response.statusCode.toString());
@@ -424,9 +425,9 @@ Future getData(bool useEtag) async {
     var urlLHPwarnings =
         Uri.parse('https://warnung.bund.de/bbk.lhp/hochwassermeldungen.json');
     if (useEtag) {
-      _response = await get(urlLHPwarnings, headers: {'If-None-Match': appState.lhpETag}).timeout(userPreferences.networkTimeout);
+      _response = await get(urlLHPwarnings, headers: {'If-None-Match': appState.lhpETag}).timeout(UserPreferences().networkTimeout);
     } else {
-      _response = await get(urlLHPwarnings).timeout(userPreferences.networkTimeout);
+      _response = await get(urlLHPwarnings).timeout(UserPreferences().networkTimeout);
     }
     //print("Response status: " + response.statusCode.toString());
     if (_response.statusCode == 200) {
@@ -520,7 +521,7 @@ Future getData(bool useEtag) async {
     allWarnMessageList = _tempWarnMessageList; // transfer temp List in real list
     appState.dataFetchStatusOldAPI = DataFetchStatus.success;
 
-    if (userPreferences.activateAlertSwiss) {
+    if (UserPreferences().activateAlertSwiss) {
       await callAlertSwissAPI();
     }
 
@@ -528,7 +529,7 @@ Future getData(bool useEtag) async {
     // cacheWarnings();
 
     //print("New WarnList ist here");
-    if (userPreferences.showStatusNotification) {
+    if (UserPreferences().showStatusNotification) {
       sendStatusUpdateNotification(true);
     }
   } catch (e) {
@@ -541,7 +542,7 @@ Future getData(bool useEtag) async {
     appState.katwarnStatus = false;
     appState.dataFetchStatusOldAPI = DataFetchStatus.error;
     appState.lhpStatus = false;
-    if (userPreferences.showStatusNotification) {
+    if (UserPreferences().showStatusNotification) {
       sendStatusUpdateNotification(false);
     }
   }

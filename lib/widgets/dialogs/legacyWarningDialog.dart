@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../class/class_userPreferences.dart';
 import '../../main.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -13,7 +14,7 @@ class _LegacyWarningDialogState extends State<LegacyWarningDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text("${AppLocalizations.of(context)!.legacy_warning_dialog_title} ${userPreferences.versionNumber}"),
+      title: Text("${AppLocalizations.of(context)!.legacy_warning_dialog_title} ${UserPreferences().versionNumber}"),
       content: Container(
         child: SingleChildScrollView(
           child: Column(

@@ -4,6 +4,7 @@ import '../class/abstract_Place.dart';
 import '../class/class_AlertSwissPlace.dart';
 import '../class/class_Geocode.dart';
 import '../class/class_NinaPlace.dart';
+import '../class/class_userPreferences.dart';
 import '../main.dart';
 import 'listHandler.dart';
 import 'saveAndLoadSharedPreferences.dart';
@@ -61,7 +62,7 @@ Future<dynamic> getPlaces() async {
     print("[geocodeHandler] data already stored");
     return savedData;
   } else {
-    final Response response = await get(Uri.parse(_url)).timeout(userPreferences.networkTimeout);
+    final Response response = await get(Uri.parse(_url)).timeout(UserPreferences().networkTimeout);
     if (response.statusCode != 200) return;
     print("[geocodehandler] got data ");
     final data = utf8.decode(response.bodyBytes);

@@ -1,5 +1,6 @@
 import 'package:foss_warn/services/saveAndLoadSharedPreferences.dart';
 
+import '../class/class_userPreferences.dart';
 import '../main.dart';
 import '../class/class_NotificationService.dart';
 
@@ -14,20 +15,20 @@ sendStatusUpdateNotification(bool success, [String? error]) async {
       formattedMinuteNow,
       formattedHourNow = "";
 
-  if (now.minute + userPreferences.frequencyOfAPICall >= 60) {
-    hourToAdd = (now.minute + userPreferences.frequencyOfAPICall.toInt()) ~/ 60;
-    minute = (now.minute + userPreferences.frequencyOfAPICall.toInt()) % 60;
+  if (now.minute + UserPreferences().frequencyOfAPICall >= 60) {
+    hourToAdd = (now.minute + UserPreferences().frequencyOfAPICall.toInt()) ~/ 60;
+    minute = (now.minute + UserPreferences().frequencyOfAPICall.toInt()) % 60;
     hour += hourToAdd;
 
     print("minutes: " + minute.toString());
     print("add hour: " + hourToAdd.toString());
-    print("Min + next " + (now.minute + userPreferences.frequencyOfAPICall.toInt()).toString());
+    print("Min + next " + (now.minute + UserPreferences().frequencyOfAPICall.toInt()).toString());
 
     if (hour >= 24) {
       hour -= 24;
     }
   } else {
-    minute += userPreferences.frequencyOfAPICall.toInt();
+    minute += UserPreferences().frequencyOfAPICall.toInt();
   }
 
   // format time to hh:mm

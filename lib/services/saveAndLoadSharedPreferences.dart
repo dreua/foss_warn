@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import '../class/class_AlertSwissPlace.dart';
 import '../class/class_NinaPlace.dart';
 
+import '../class/class_userPreferences.dart';
 import 'listHandler.dart';
 import '../main.dart';
 
@@ -78,32 +79,32 @@ void saveLastBackgroundUpdateTime(String time) async {
 saveSettings() async {
   SharedPreferences preferences = await SharedPreferences.getInstance();
   preferences.setBool(
-      "notificationGeneral", userPreferences.shouldNotifyGeneral);
-  preferences.setInt("startScreen", userPreferences.startScreen);
+      "notificationGeneral", UserPreferences().shouldNotifyGeneral);
+  preferences.setInt("startScreen", UserPreferences().startScreen);
   preferences.setBool(
-      "showExtendedMetaData", userPreferences.showExtendedMetaData);
-  preferences.setDouble("warningFontSize", userPreferences.warningFontSize);
-  preferences.setBool("showWelcomeScreen", userPreferences.showWelcomeScreen);
+      "showExtendedMetaData", UserPreferences().showExtendedMetaData);
+  preferences.setDouble("warningFontSize", UserPreferences().warningFontSize);
+  preferences.setBool("showWelcomeScreen", UserPreferences().showWelcomeScreen);
   preferences.setString(
-      "sortWarningsBy", userPreferences.sortWarningsBy.toString());
+      "sortWarningsBy", UserPreferences().sortWarningsBy.toString());
   preferences.setBool(
-      "showStatusNotification", userPreferences.showStatusNotification);
+      "showStatusNotification", UserPreferences().showStatusNotification);
   preferences.setDouble(
-      "frequencyOfAPICall", userPreferences.frequencyOfAPICall);
+      "frequencyOfAPICall", UserPreferences().frequencyOfAPICall);
   preferences.setString(
-      "selectedThemeMode", userPreferences.selectedThemeMode.toString());
+      "selectedThemeMode", UserPreferences().selectedThemeMode.toString());
   preferences.setInt(
       "selectedLightTheme",
-      userPreferences.availableLightThemes
-          .indexOf(userPreferences.selectedLightTheme));
+      UserPreferences().availableLightThemes
+          .indexOf(UserPreferences().selectedLightTheme));
   preferences.setInt(
       "selectedDarkTheme",
-      userPreferences.availableDarkThemes
-          .indexOf(userPreferences.selectedDarkTheme));
-  preferences.setBool("showAllWarnings", userPreferences.showAllWarnings);
-  preferences.setString("notificationSourceSettings",
-      jsonEncode(userPreferences.notificationSourceSettings));
-  preferences.setBool("activateAlertSwiss", userPreferences.activateAlertSwiss);
+      UserPreferences().availableDarkThemes
+          .indexOf(UserPreferences().selectedDarkTheme));
+  preferences.setBool("showAllWarnings", UserPreferences().showAllWarnings);
+  /*preferences.setString("notificationSourceSettings",
+      jsonEncode(UserPreferences().notificationSourceSettings));*/
+  preferences.setBool("activateAlertSwiss", UserPreferences().activateAlertSwiss);
   print("Settings saved");
 }
 
@@ -145,158 +146,88 @@ loadSettings() async {
   SharedPreferences preferences = await SharedPreferences.getInstance();
 
   if (preferences.containsKey("notificationGeneral")) {
-    userPreferences.shouldNotifyGeneral =
+    UserPreferences().shouldNotifyGeneral =
         preferences.getBool("notificationGeneral")!;
   }
   if (preferences.containsKey("startScreen")) {
-    userPreferences.startScreen = preferences.getInt("startScreen")!;
+    UserPreferences().startScreen = preferences.getInt("startScreen")!;
   }
   if (preferences.containsKey("showExtendedMetaData")) {
-    userPreferences.showExtendedMetaData =
+    UserPreferences().showExtendedMetaData =
         preferences.getBool("showExtendedMetaData")!;
   } else {
-    userPreferences.showExtendedMetaData = false;
+    UserPreferences().showExtendedMetaData = false;
   }
   if (preferences.containsKey("warningFontSize")) {
-    userPreferences.warningFontSize = preferences.getDouble("warningFontSize")!;
+    UserPreferences().warningFontSize = preferences.getDouble("warningFontSize")!;
   } else {
     saveSettings(); //@todo remove?
     loadSettings();
   }
   if (preferences.containsKey("showWelcomeScreen")) {
-    userPreferences.showWelcomeScreen =
+    UserPreferences().showWelcomeScreen =
         preferences.getBool("showWelcomeScreen")!;
   }
   if (preferences.containsKey("sortWarningsBy")) {
     String temp = preferences.getString("sortWarningsBy")!;
-    userPreferences.sortWarningsBy = temp;
+    UserPreferences().sortWarningsBy = temp;
   }
   if (preferences.containsKey("showStatusNotification")) {
-    userPreferences.showStatusNotification =
+    UserPreferences().showStatusNotification =
         preferences.getBool("showStatusNotification")!;
   }
   if (preferences.containsKey("updateAvailable")) {
-    userPreferences.updateAvailable = preferences.getBool("updateAvailable")!;
+    UserPreferences().updateAvailable = preferences.getBool("updateAvailable")!;
   }
 
   if (preferences.containsKey("frequencyOfAPICall")) {
-    userPreferences.frequencyOfAPICall =
+    UserPreferences().frequencyOfAPICall =
         preferences.getDouble("frequencyOfAPICall")!;
   }
   if (preferences.containsKey("selectedThemeMode")) {
     String temp = preferences.getString("selectedThemeMode")!;
     switch (temp) {
       case 'ThemeMode.system':
-        userPreferences.selectedThemeMode = ThemeMode.system;
+        UserPreferences().selectedThemeMode = ThemeMode.system;
         break;
       case 'ThemeMode.dark':
-        userPreferences.selectedThemeMode = ThemeMode.dark;
+        UserPreferences().selectedThemeMode = ThemeMode.dark;
         break;
       case 'ThemeMode.light':
-        userPreferences.selectedThemeMode = ThemeMode.light;
+        UserPreferences().selectedThemeMode = ThemeMode.light;
         break;
     }
   } else {
     // Default value
-    userPreferences.selectedThemeMode = ThemeMode.system;
+    UserPreferences().selectedThemeMode = ThemeMode.system;
   }
   if (preferences.containsKey("selectedLightTheme")) {
     int temp = preferences.getInt("selectedLightTheme")!;
-    if (temp > userPreferences.availableLightThemes.length - 1 || temp == -1) {
-      userPreferences.selectedLightTheme =
-          userPreferences.availableLightThemes[0];
+    if (temp > UserPreferences().availableLightThemes.length - 1 || temp == -1) {
+      UserPreferences().selectedLightTheme =
+          UserPreferences().availableLightThemes[0];
     } else {
-      userPreferences.selectedLightTheme =
-          userPreferences.availableLightThemes[temp];
+      UserPreferences().selectedLightTheme =
+          UserPreferences().availableLightThemes[temp];
     }
   }
   if (preferences.containsKey("selectedDarkTheme")) {
     int temp = preferences.getInt("selectedDarkTheme")!;
-    if (temp > userPreferences.availableDarkThemes.length - 1 || temp == -1) {
-      userPreferences.selectedDarkTheme =
-          userPreferences.availableDarkThemes[0];
+    if (temp > UserPreferences().availableDarkThemes.length - 1 || temp == -1) {
+      UserPreferences().selectedDarkTheme =
+          UserPreferences().availableDarkThemes[0];
     } else {
-      userPreferences.selectedDarkTheme =
-          userPreferences.availableDarkThemes[temp];
+      UserPreferences().selectedDarkTheme =
+          UserPreferences().availableDarkThemes[temp];
     }
   }
 
   if (preferences.containsKey("showAllWarnings")) {
-    userPreferences.showAllWarnings = preferences.getBool("showAllWarnings")!;
+    UserPreferences().showAllWarnings = preferences.getBool("showAllWarnings")!;
   }
-  if (preferences.containsKey("notificationSourceSettings")) {
-    List<dynamic> data =
-        jsonDecode(preferences.getString("notificationSourceSettings")!);
-    userPreferences.notificationSourceSettings.clear();
-    for (int i = 0; i < data.length; i++) {
-      userPreferences.notificationSourceSettings
-          .add(NotificationPreferences.fromJson(data[i]));
-    }
-  }
+
   if (preferences.containsKey("activateAlertSwiss")) {
-    userPreferences.activateAlertSwiss =
+    UserPreferences().activateAlertSwiss =
         preferences.getBool("activateAlertSwiss")!;
-  }
-}
-
-@deprecated
-saveNotificationSettingsImportanceList() async {
-  print("Save saveNotificationSettingsImportanceList");
-  notificationSettingsImportance.clear();
-  if (userPreferences.notificationWithExtreme) {
-    notificationSettingsImportance.add("extreme");
-  }
-  if (userPreferences.notificationWithSevere) {
-    notificationSettingsImportance.add("severe");
-  }
-  if (userPreferences.notificationWithModerate) {
-    notificationSettingsImportance.add("moderate");
-  }
-  if (userPreferences.notificationWithMinor) {
-    notificationSettingsImportance.add("minor");
-  }
-  SharedPreferences preferences = await SharedPreferences.getInstance();
-  preferences.setStringList(
-      'notificationSettingsImportance', notificationSettingsImportance);
-
-  print(notificationSettingsImportance);
-}
-
-@deprecated
-loadNotificationSettingsImportanceList() async {
-  SharedPreferences preferences = await SharedPreferences.getInstance();
-  //check if notificationSettingsImportance already exists
-  if (preferences.containsKey("notificationSettingsImportance")) {
-    print("notificationSettingsImportance exist - load now");
-    notificationSettingsImportance.clear();
-    notificationSettingsImportance =
-        preferences.getStringList('notificationSettingsImportance')!;
-    userPreferences.notificationWithSevere = false;
-    userPreferences.notificationWithModerate = false;
-    userPreferences.notificationWithMinor = false;
-    for (String i in notificationSettingsImportance) {
-      switch (i.toLowerCase()) {
-        case "severe":
-          userPreferences.notificationWithSevere = true;
-          continue;
-        case "moderate":
-          userPreferences.notificationWithModerate = true;
-          continue;
-        case "minor":
-          userPreferences.notificationWithMinor = true;
-          continue;
-      }
-    }
-    // fix legacy
-    if (notificationSettingsImportance
-        .contains(["Severe", "Moderate", "Minor"])) {
-      saveNotificationSettingsImportanceList();
-      loadNotificationSettingsImportanceList();
-    }
-  } else {
-    print("notificationSettingsImportance Key does not exist");
-    saveNotificationSettingsImportanceList(); //save init List
-    loadNotificationSettingsImportanceList(); // try again
-    print("notificationSettingsImportance should yet exist");
   }
 }

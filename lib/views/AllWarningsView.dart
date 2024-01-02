@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
 
+import '../class/class_userPreferences.dart';
 import '../services/apiHandler.dart';
 import '../services/checkForMyPlacesWarnings.dart';
 import '../widgets/ConnectionErrorWidget.dart';
@@ -28,9 +29,9 @@ class _AllWarningsViewState extends State<AllWarningsView> {
   @override
   void initState() {
     super.initState();
-    if (userPreferences.isFirstStart) {
+    if (UserPreferences().isFirstStart) {
       _loading = true;
-      userPreferences.isFirstStart = false;
+      UserPreferences().isFirstStart = false;
     }
   }
 
@@ -44,7 +45,7 @@ class _AllWarningsViewState extends State<AllWarningsView> {
 
     void loadData() async {
       print("[allWarningsView] Load Data");
-      if (userPreferences.showAllWarnings) {
+      if (UserPreferences().showAllWarnings) {
         // call (old) api with all warnings
         await getData(false);
       } else {
@@ -53,7 +54,6 @@ class _AllWarningsViewState extends State<AllWarningsView> {
       }
       checkForMyPlacesWarnings(true);
       sortWarnings(allWarnMessageList);
-      loadNotificationSettingsImportanceList();
       setState(() {
         print("loading finished");
         _loading = false;
@@ -93,7 +93,7 @@ class _AllWarningsViewState extends State<AllWarningsView> {
         color: Theme.of(context).colorScheme.secondary,
         onRefresh: reloadData,
         child: myPlaceList.isNotEmpty // check if there is a place saved
-            ? userPreferences.showAllWarnings // if warnings that are not in MyPlaces shown
+            ? UserPreferences().showAllWarnings // if warnings that are not in MyPlaces shown
                 ? SingleChildScrollView(
                     physics: AlwaysScrollableScrollPhysics(),
                     child: Column(children: [

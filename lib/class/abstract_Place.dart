@@ -9,6 +9,7 @@ import '../main.dart';
 import '../services/updateProvider.dart';
 import 'class_NotificationService.dart';
 import 'class_WarnMessage.dart';
+import 'class_userPreferences.dart';
 
 abstract class Place {
   final String _name;
@@ -128,7 +129,7 @@ abstract class Place {
   /// Moderate (2)     | Minor (3)            | 3 >= 2 => true  <br>
   /// Minor (3)        | Moderate (2)         | 2 >= 3 => false
   bool _checkIfEventShouldBeNotified(WarningSource source, Severity severity) {
-    NotificationPreferences notificationSourceSetting = userPreferences
+    NotificationPreferences notificationSourceSetting = UserPreferences()
         .notificationSourceSettings
         .firstWhere((element) => element.warningSource == source);
 

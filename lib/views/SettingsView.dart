@@ -8,6 +8,7 @@ import 'package:provider/provider.dart';
 
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
+import '../class/class_userPreferences.dart';
 import '../main.dart';
 import '../services/apiHandler.dart';
 import '../widgets/dialogs/ChooseThemeDialog.dart';
@@ -34,7 +35,7 @@ class _SettingsState extends State<Settings> {
   @override
   void initState() {
     frequencyController.text =
-        userPreferences.frequencyOfAPICall.toInt().toString();
+        UserPreferences().frequencyOfAPICall.toInt().toString();
 
     return super.initState();
   }
@@ -91,13 +92,13 @@ class _SettingsState extends State<Settings> {
                 subtitle: Text(AppLocalizations.of(context)!
                     .settings_show_status_notification_subtitle),
                 trailing: Switch(
-                    value: userPreferences.showStatusNotification,
+                    value: UserPreferences().showStatusNotification,
                     onChanged: (value) {
                       setState(() {
-                        userPreferences.showStatusNotification = value;
+                        UserPreferences().showStatusNotification = value;
                       });
                       saveSettings();
-                      if (userPreferences.showStatusNotification == false) {
+                      if (UserPreferences().showStatusNotification == false) {
                         NotificationService.cancelOneNotification(1);
                       }
                     })),
@@ -105,14 +106,14 @@ class _SettingsState extends State<Settings> {
               title: Text(
                   AppLocalizations.of(context)!.settings_background_service),
               trailing: Switch(
-                  value: userPreferences.shouldNotifyGeneral,
+                  value: UserPreferences().shouldNotifyGeneral,
                   //@todo maybe we should add a confirmation dialog to prevent accidentally disabled background updates
                   onChanged: (value) {
                     setState(() {
-                      userPreferences.shouldNotifyGeneral = value;
+                      UserPreferences().shouldNotifyGeneral = value;
                     });
                     saveSettings();
-                    if (userPreferences.shouldNotifyGeneral) {
+                    if (UserPreferences().shouldNotifyGeneral) {
                       AlarmManager().cancelBackgroundTask();
                       AlarmManager().registerBackgroundTask();
                     } else {
@@ -121,7 +122,7 @@ class _SettingsState extends State<Settings> {
                     }
                   }),
             ),
-            userPreferences.shouldNotifyGeneral ?
+            UserPreferences().shouldNotifyGeneral ?
             ListTile(
               title: Row(
                 mainAxisSize: MainAxisSize.max,
@@ -151,11 +152,11 @@ class _SettingsState extends State<Settings> {
                                         double.parse(value) <=
                                             _maxValueFrequencyOfAPICall) {
                                       setState(() {
-                                        userPreferences.frequencyOfAPICall =
+                                        UserPreferences().frequencyOfAPICall =
                                             double.parse(value);
                                       });
                                     } else {
-                                      frequencyController.text = userPreferences
+                                      frequencyController.text = UserPreferences()
                                           .frequencyOfAPICall
                                           .round()
                                           .toString();
@@ -189,16 +190,16 @@ class _SettingsState extends State<Settings> {
                             Text("min"),
                             Expanded(
                               child: Slider(
-                                value: userPreferences.frequencyOfAPICall,
+                                value: UserPreferences().frequencyOfAPICall,
                                 activeColor:
                                     Theme.of(context).colorScheme.primary,
                                 min: 1,
                                 max: _maxValueFrequencyOfAPICall,
                                 onChanged: (value) {
                                   setState(() {
-                                    userPreferences.frequencyOfAPICall =
+                                    UserPreferences().frequencyOfAPICall =
                                         value.roundToDouble();
-                                    frequencyController.text = userPreferences
+                                    frequencyController.text = UserPreferences()
                                         .frequencyOfAPICall
                                         .toInt()
                                         .toString();
@@ -238,7 +239,7 @@ class _SettingsState extends State<Settings> {
             ListTile(
               title: Text(AppLocalizations.of(context)!.settings_start_view),
               trailing: DropdownButton<int>(
-                value: userPreferences.startScreen,
+                value: UserPreferences().startScreen,
                 icon: const Icon(Icons.arrow_downward),
                 iconSize: 24,
                 elevation: 16,
@@ -249,7 +250,7 @@ class _SettingsState extends State<Settings> {
                 ),
                 onChanged: (int? newValue) {
                   setState(() {
-                    userPreferences.startScreen = newValue!;
+                    UserPreferences().startScreen = newValue!;
                   });
                   saveSettings();
                 },
@@ -265,10 +266,10 @@ class _SettingsState extends State<Settings> {
                 title: Text(AppLocalizations.of(context)!
                     .settings_show_extended_metadata),
                 trailing: Switch(
-                    value: userPreferences.showExtendedMetaData,
+                    value: UserPreferences().showExtendedMetaData,
                     onChanged: (value) {
                       setState(() {
-                        userPreferences.showExtendedMetaData = value;
+                        UserPreferences().showExtendedMetaData = value;
                       });
                       saveSettings();
                     })),
@@ -289,10 +290,10 @@ class _SettingsState extends State<Settings> {
               subtitle: Text(AppLocalizations.of(context)!
                   .settings_display_all_warnings_subtitle),
               trailing: Switch(
-                  value: userPreferences.showAllWarnings,
+                  value: UserPreferences().showAllWarnings,
                   onChanged: (value) {
                     setState(() {
-                      userPreferences.showAllWarnings = value;
+                      UserPreferences().showAllWarnings = value;
                     });
                     saveSettings();
                     final updater = Provider.of<Update>(context, listen: false);
@@ -341,10 +342,10 @@ class _SettingsState extends State<Settings> {
               subtitle: Text(
                   (AppLocalizations.of(context)!.settings_alertSwiss_subtitle)),
               trailing: Switch(
-                value: userPreferences.activateAlertSwiss,
+                value: UserPreferences().activateAlertSwiss,
                 onChanged: (value) {
                   setState(() {
-                    userPreferences.activateAlertSwiss = value;
+                    UserPreferences().activateAlertSwiss = value;
                   });
                   saveSettings();
                 },

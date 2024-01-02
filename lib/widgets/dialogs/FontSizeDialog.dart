@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../class/class_userPreferences.dart';
 import '../../main.dart';
 import '../../services/saveAndLoadSharedPreferences.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -31,10 +32,10 @@ class _FontSizeDialogState extends State<FontSizeDialog> {
                 ),
                 selectedColor: Theme.of(context).colorScheme.primary,
                 selected:
-                    userPreferences.warningFontSize == 12.0 ? true : false,
+                    UserPreferences().warningFontSize == 12.0 ? true : false,
                 onTap: () {
                   setState(() {
-                    userPreferences.warningFontSize = 12.0;
+                    UserPreferences().warningFontSize = 12.0;
                   });
                   saveSettings();
                   Navigator.of(context).pop();
@@ -51,10 +52,10 @@ class _FontSizeDialogState extends State<FontSizeDialog> {
                 ),
                 selectedColor: Theme.of(context).colorScheme.primary,
                 selected:
-                    userPreferences.warningFontSize == 14.0 ? true : false,
+                    UserPreferences().warningFontSize == 14.0 ? true : false,
                 onTap: () {
                   setState(() {
-                    userPreferences.warningFontSize = 14.0;
+                    UserPreferences().warningFontSize = 14.0;
                   });
                   saveSettings();
                   Navigator.of(context).pop();
@@ -71,10 +72,10 @@ class _FontSizeDialogState extends State<FontSizeDialog> {
                 ),
                 selectedColor: Theme.of(context).colorScheme.primary,
                 selected:
-                    userPreferences.warningFontSize == 16.0 ? true : false,
+                    UserPreferences().warningFontSize == 16.0 ? true : false,
                 onTap: () {
                   setState(() {
-                    userPreferences.warningFontSize = 16.0;
+                    UserPreferences().warningFontSize = 16.0;
                   });
                   saveSettings();
                   Navigator.of(context).pop();
@@ -91,10 +92,10 @@ class _FontSizeDialogState extends State<FontSizeDialog> {
                 ),
                 selectedColor: Theme.of(context).colorScheme.secondary,
                 selected:
-                    userPreferences.warningFontSize == 18.0 ? true : false,
+                    UserPreferences().warningFontSize == 18.0 ? true : false,
                 onTap: () {
                   setState(() {
-                    userPreferences.warningFontSize = 18.0;
+                    UserPreferences().warningFontSize = 18.0;
                   });
                   saveSettings();
                   Navigator.of(context).pop();

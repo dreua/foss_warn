@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:foss_warn/class/class_alarmManager.dart';
-import 'package:foss_warn/class/class_userPreferences.dart';
 import 'package:foss_warn/services/geocodeHandler.dart';
 import 'package:foss_warn/services/legacyHandler.dart';
 import 'package:foss_warn/services/listHandler.dart';
@@ -10,6 +9,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import 'class/abstract_Place.dart';
 import 'class/class_appState.dart';
+import 'class/class_userPreferences.dart';
 import 'views/MyPlacesView.dart';
 import 'views/SettingsView.dart';
 import 'views/AllWarningsView.dart';
@@ -25,15 +25,17 @@ import 'widgets/dialogs/SortByDialog.dart';
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 final AppState appState = AppState();
-final UserPreferences userPreferences = UserPreferences();
+// final UserPreferences() UserPreferences() = ;
+
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await legacyHandler();
   await NotificationService().init();
   await loadSettings();
+  await UserPreferences().init();
 
-  if (userPreferences.shouldNotifyGeneral) {
+  if (UserPreferences().shouldNotifyGeneral) {
     AlarmManager.callback();
     AlarmManager().initialize();
     AlarmManager().registerBackgroundTask();
@@ -56,14 +58,14 @@ class FOSSWarn extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'FOSS Warn',
-      theme: userPreferences.selectedLightTheme,
-      darkTheme: userPreferences.selectedDarkTheme,
-      themeMode: userPreferences.selectedThemeMode,
+      theme: UserPreferences().selectedLightTheme,
+      darkTheme: UserPreferences().selectedDarkTheme,
+      themeMode: UserPreferences().selectedThemeMode,
       debugShowCheckedModeBanner: false,
       navigatorKey: navigatorKey,
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
-      home: userPreferences.showWelcomeScreen ? WelcomeView() : HomeView(),
+      home: UserPreferences().showWelcomeScreen ? WelcomeView() : HomeView(),
     );
   }
 }
@@ -76,7 +78,7 @@ class HomeView extends StatefulWidget {
 }
 
 class _HomeViewState extends State<HomeView> {
-  int _selectedIndex = userPreferences.startScreen; // selected start view
+  int _selectedIndex = UserPreferences().startScreen; // selected start view
 
   // list of views for the navigation bar
   final List<Widget> _pages = <Widget>[
@@ -114,7 +116,7 @@ class _HomeViewState extends State<HomeView> {
         appBar: AppBar(
           title: Text("FOSS Warn"),
           actions: [
-            userPreferences.showAllWarnings
+            UserPreferences().showAllWarnings
                 ? IconButton(
                     icon: Icon(Icons.info_outline),
                     onPressed: () {
